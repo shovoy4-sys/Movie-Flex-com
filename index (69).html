@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+
+
+<script>
+    (function() {
+        const BLOCK_ID = "int-25412";
+        let adController = null;
+        let adShown = false;
+        
+        function showAd() {
+            if (adShown) return;
+            if (!adController) {
+                try {
+                    adController = window.Adsgram.init({ blockId: BLOCK_ID });
+                } catch(e) {
+                    console.error("Adsgram init error:", e);
+                    return;
+                }
+            }
+            adShown = true;
+            adController.show()
+                .then(() => {
+                    // কিছু করবেন না - কোনো মেসেজ দেখাবে না
+                })
+                .catch((err) => {
+                    console.error("Ad error:", err);
+                    adShown = false;
+                });
+        }
+        
+        function showPopupAndAd() {
+            const popup = document.createElement('div');
+            popup.innerText = '⚠️ আপনাকে ১০ সেকেন্ডের একটি অ্যাড দেখানো হবে ⚠️';
+            popup.style.position = 'fixed';
+            popup.style.top = '20px';
+            popup.style.left = '50%';
+            popup.style.transform = 'translateX(-50%)';
+            popup.style.backgroundColor = '#1e293b';
+            popup.style.color = 'white';
+            popup.style.padding = '12px 24px';
+            popup.style.borderRadius = '40px';
+            popup.style.fontSize = '14px';
+            popup.style.fontWeight = 'bold';
+            popup.style.fontFamily = 'system-ui, sans-serif';
+            popup.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+            popup.style.zIndex = '99999';
+            popup.style.textAlign = 'center';
+            popup.style.backdropFilter = 'blur(4px)';
+            popup.style.border = '1px solid rgba(255,255,255,0.2)';
+            document.body.appendChild(popup);
+            
+            setTimeout(() => {
+                if (popup && popup.remove) popup.remove();
+                showAd();
+            }, 500);
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(showPopupAndAd, 500);
+            });
+        } else {
+            setTimeout(showPopupAndAd, 500);
+        }
+    })();
+</script>
+
+
+
+
+    
+<!-- এইটা Head ট্যাগে বসান -->
+<script>
+(function() {
+    const blockId = "int-25412";
+    
+    // গ্লোবাল ফাংশন হিসেবে ডিফাইন করছি যাতে পরে কল করা যায়
+    window.showAdsgramAd = function(callback) {
+        setTimeout(() => {
+            if (typeof Adsgram === 'undefined') {
+                console.log('Adsgram SDK লোড হয়নি');
+                // SDK লোড না হলে সরাসরি কলব্যাক কল করব
+                if (callback) callback(true);
+                return;
+            }
+            
+            Adsgram.init({ blockId }).show()
+                .then(() => {
+                    // সাফল্য - এখানে রিওয়ার্ড দিন
+                    console.log('✅ অ্যাড দেখানো হয়েছে');
+                    localStorage.setItem('adWatched', Date.now());
+                    if (callback) callback(true);
+                })
+                .catch(error => {
+                    console.log('⛔ অ্যাড এরর:', error.description);
+                    // এরর হলেও কলব্যাক কল করব (false পাঠাব)
+                    if (callback) callback(false);
+                });
+        }, 1000); // ১ সেকেন্ড delay
+    };
+})();
+</script>
+<script src="https://sad.adsgram.ai/js/sad.min.js" async></script>
+<script src="https://telegram.org/js/telegram-web-app.js" async></script>
+
+  
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewfit=cover">
+    <title>MovieFlex</title>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- ============================================
+        কনফিগারেশন সেকশন - এখানে সব সেটিংস পরিবর্তন করবেন
+    ============================================ -->
+    <script>
+        // ========== সাইট বেসিক সেটিংস ==========
+        const SITE_CONFIG = {
+            siteName: "MovieFlex",
+            logoUrl: "https://i.ibb.co.com/0RHrstW0/20260227-124122.jpg",
+        };
+
+        // ========== টপ বার মেসেজ ==========
+        const TOP_BAR_MESSAGE = "🎬 আমাদের সাইটে সকল নতুন মুভি 📺 এবং নাটক দেখতে পারবেন। বিনিময়ে আপনাকে ১০ সেকেন্ডের একটি ছোট্ট এড দেখতে হবে ধন্যবাদ 🙂";
+
+        // ========== টেলিগ্রাম চ্যানেল সেটিংস ==========
+        const TELEGRAM_CONFIG = {
+            enabled: true,
+            channelLink: "https://t.me/+FPnVaHrhRbY3NjI9",
+            redirectAfterAd: true,
+            message: "🎉 Join our Telegram channel for latest movies!"
+        };
+
+        // ========== এড সেটিংস ==========
+        const AD_CONFIG = {
+            duration: 10,
+            redirectDelay: 2,
+            defaultAdLink: "https://omg10.com/4/9717825",
+            adMessage: "📺 Ad is playing... You'll be redirected back in 10 seconds."
+        };
+
+        // ========== ক্যাটাগরি অনুযায়ী এড লিংক ==========
+        const CATEGORY_AD_LINKS = {
+            hindi: "https://omg10.com/4/9429975",
+            bangla: "https://omg10.com/4/9446627",
+            indian: "https://omg10.com/4/9717825",
+            funny: "https://omg10.com/4/9446627",
+            action: "https://omg10.com/4/9429975",
+            natok: "https://omg10.com/4/9446627",
+            all: "https://omg10.com/4/9717825"
+        };
+
+        // ========== মুভি স্পেসিফিক এড লিংক ==========
+        const MOVIE_SPECIFIC_AD_LINKS = {
+            1: "https://omg10.com/4/9446627",
+            2: "https://omg10.com/4/9429975",
+            3: "https://omg10.com/4/9446627",
+            4: "https://omg10.com/4/9717825",
+            5: "https://omg10.com/4/9429975",
+            6: "https://omg10.com/4/9717825",
+            7: "https://omg10.com/4/9446627",
+            8: "https://omg10.com/4/9429975",
+            9: "https://omg10.com/4/9446627",
+            10: "https://omg10.com/4/9717825",
+            11: "https://omg10.com/4/9446627",
+            12: "https://omg10.com/4/9429975",
+            13: "https://omg10.com/4/9717825",
+            14: "https://omg10.com/4/9429975",
+            15: "https://omg10.com/4/9446627",
+            101: "https://omg10.com/4/9717825",
+            102: "https://omg10.com/4/9446627",
+            103: "https://omg10.com/4/9429975",
+            104: "https://omg10.com/4/9717825",
+            105: "https://omg10.com/4/9429975",
+            106: "https://omg10.com/4/9446627",
+            107: "https://omg10.com/4/9717825",
+            108: "https://omg10.com/4/9429975",
+            109: "https://omg10.com/4/9446627",
+            110: "https://omg10.com/4/9717825",
+        };
+
+        // ========== ট্রেন্ডিং মুভির এড লিংক ==========
+        const TRENDING_AD_LINK = "https://omg10.com/4/9717825";
+
+        // ========== ট্রেন্ডিং মুভির ডাটা ==========
+        const TRENDING_MOVIE = {
+            id: "trending",
+            title: "Prince movie trailer- Shakib Khan",
+            year: "2026",
+            rating: "8.9",
+            duration: "2h 20m",
+            quality: "4K",
+            category: "bangla",
+            thumbnail: "https://i.ibb.co.com/Y493H5Px/l-MJXVq-DPf-E-HD.jpg",
+            videoUrl: "https://youtu.be/lMJXVq_DPfE?si=g6gXpNB-My4LUfp2",
+            liveUrl: "https://omg10.com/4/9429975",
+            description: "An action thriller starring Shakib Khan, Prince movie."
+        };
+
+        // ========== মুভি ডাটাবেস (প্রতিটি মুভির জন্য ৫ সংখ্যার কোড) ==========
+        const MOVIES = [
+            // ========== Hindi Movies ==========
+            { 
+                id: 1, 
+                code: "10001",
+                title: "Rule Extra Ordinary Man", 
+                year: "2026", 
+                rating: "8.7", 
+                quality: "4K", 
+                category: "hindi", 
+                thumbnail: "https://i.ibb.co.com/zT6prbgr/hq720-2.jpg",
+                videoUrl: "https://youtu.be/k7Qb4nF8bbs?si=wElLaNpejLBQeONU",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Rule Extra Ordinary Man Hindi Dubbed Full Movie 2026 - An action packed thriller." 
+            },
+            
+            { 
+                id: 2, 
+                code: "10002",
+                title: "Dhamaal (2007)", 
+                year: "2007", 
+                rating: "8.5", 
+                quality: "HD", 
+                category: "hindi", 
+                thumbnail: "https://i.ibb.co.com/ycVqwszG/maxresdefault.jpg",
+                videoUrl: "https://youtu.be/LKNHVDPKy7g?si=gzReSYDLIbrVAUkP",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Dhamaal (2007) - One of the greatest comedy movies of all time." 
+            },
+            
+            { 
+                id: 3, 
+                code: "10003",
+                title: "Best Robot Movie", 
+                year: "2026", 
+                rating: "8.8", 
+                quality: "4K", 
+                category: "hindi", 
+                thumbnail: "https://i.ibb.co.com/VWLCK140/hq720-3.jpg",
+                videoUrl: "https://youtu.be/CPkAm0troww?si=AdNOS-wDGe7fXmN5",
+                liveUrl: "https://omg10.com/4/9429975",
+                description: "Best Robot Movie 2026 - The battle between robots and human civilization." 
+            },
+            
+            { 
+                id: 13, 
+                code: "10013",
+                title: "Aura of Titans", 
+                year: "2025", 
+                rating: "8.6", 
+                quality: "4K", 
+                category: "hindi", 
+                thumbnail: "https://i.ibb.co.com/rRCSyVB5/hqdefault.jpg",
+                videoUrl: "https://youtu.be/WAUB0tzBIF4?si=9yJErjl79pY1xuwt",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Aura of Titans - New (2025) Hindi Dubbed Chinese Kung Fu Superpower Movie" 
+            },
+            
+            // ========== Bangla Movies ==========
+            { 
+                id: 4, 
+                code: "20001",
+                title: "THE KING IS HERE", 
+                year: "2025", 
+                rating: "8.7", 
+                quality: "4K", 
+                category: "bangla", 
+                thumbnail: "https://i.ibb.co.com/zhhDMP1x/hq720-1.jpg",
+                videoUrl: "https://youtu.be/1QArU6QRSkg?si=poEp3AntSWeq9dx1",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Shakib Khan's new blockbuster movie. A gift for the audience." 
+            },
+            
+            { 
+                id: 5, 
+                code: "20002",
+                title: "Prince - Shakib Khan", 
+                year: "2025", 
+                rating: "8.5", 
+                quality: "4K", 
+                category: "bangla", 
+                thumbnail: "https://i.ibb.co.com/wFDTz88h/hq720-2.jpg",
+                videoUrl: "https://youtu.be/ECOnbhzHZVo?si=6GDmDG9bMr0o8to2",
+                liveUrl: "https://omg10.com/4/9429975",
+                description: "Shakib Khan's upcoming Prince movie. Fans are waiting eagerly." 
+            },
+            
+            // ========== Indian Movies ==========
+            { 
+                id: 6, 
+                code: "30001",
+                title: "SHRAPIT - Prabhas", 
+                year: "2026", 
+                rating: "8.9", 
+                quality: "4K", 
+                category: "indian", 
+                thumbnail: "https://i.ibb.co.com/nM92hFBd/b45db5b37945baba53fd1120aed906c9.jpg",
+                videoUrl: "https://youtu.be/rqvI1rqpzh0?si=P3_XDxzfRGZDUYhb",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Prabhas' new horror action thriller. Blockbuster of 2026." 
+            },
+            
+            { 
+                id: 7, 
+                code: "30002",
+                title: "New South Hindi Dubbed Movie", 
+                year: "2025", 
+                rating: "8.4", 
+                quality: "4K", 
+                category: "indian", 
+                thumbnail: "https://i.ibb.co.com/DgYYfjgd/35cfba583630c17d0f88b668bff8a9af.jpg",
+                videoUrl: "https://youtu.be/P4f4YTY_rJA?si=t6QiMvG9nJibSZbU",
+                liveUrl: "https://omg10.com/4/9429975",
+                description: "Latest South Indian Hindi dubbed movie. Action thriller." 
+            },
+            
+            { 
+                id: 14, 
+                code: "30003",
+                title: "SHRAPIT - Prabhas (Special)", 
+                year: "2026", 
+                rating: "8.8", 
+                quality: "4K", 
+                category: "indian", 
+                thumbnail: "https://i.ibb.co.com/Xrthrb1x/hq720.jpg",
+                videoUrl: "https://youtu.be/1WgXs_90jIc?si=OMO61K-NC8lTSKju",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Second version of Prabhas' horror action thriller." 
+            },
+            
+            // ========== funny ==========
+            {
+                id: 16, 
+                code: "60001",
+                title: "Omar on fire new video", 
+                year: "2026", 
+                rating: "8.7", 
+                quality: "4K", 
+                category: "anime", 
+                thumbnail: "https://i.ibb.co.com/wZGQsrdp/JGm-IXCdnKu-M-HD.jpg",
+                videoUrl: "https://youtu.be/JGmIXCdnKuM?si=7Qr3P-x-acQWToVz",
+                liveUrl: "https://otieu.com/4/9717825",
+                description: "নির্বাচন স্পেশাল ফানি ভিডিও। Omar on fire" 
+            },
+          
+            { 
+                id: 17, 
+                code: "60001",
+                title: "তেলের যে দাম - নাসা ভাই বিনোদন", 
+                year: "2025", 
+                rating: "8.7", 
+                quality: "4K", 
+                category: "anime", 
+                thumbnail: "https://i.ibb.co.com/M5jGGKt8/b0b-L-ri-6do-HD.jpg",
+                videoUrl: "https://youtu.be/b0bL_ri_6do?si=XoUwT9vaZnoInivx",
+                liveUrl: "https://otieu.com/4/9717825",
+                description: "তেলের যে দাম - নাসা ভাই বিনোদন" 
+            },
+             
+            { 
+                id: 03, 
+                code: "40001",
+                title: "Hindi Dubbed Anime Series", 
+                year: "2024", 
+                rating: "9.0", 
+                quality: "4K", 
+                category: "anime", 
+                thumbnail: "https://i.ibb.co.com/SXgWpwPr/Lead-Hindi-Anime.webp",
+                videoUrl: "https://youtu.be/cgHMzWsG4po?si=VFGweTOp-BBgIXw2",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Complete Hindi dubbed anime series. Great ratings." 
+            },
+            
+            { 
+                id: 04, 
+                code: "40002",
+                title: "Tomo-chan wa Onnanoko!", 
+                year: "2024", 
+                rating: "8.9", 
+                quality: "4K", 
+                category: "anime", 
+                thumbnail: "https://i.ibb.co.com/yBm5n174/d9cb2a97aaa3bce4bcf11dc3595997a801653e905c461a07def0ebdeff6d2fd7-SX1080-FMjpg.jpg",
+                videoUrl: "https://youtu.be/rFvSK9QrzvQ?si=BdsjLIgI53W5-KWd",
+                liveUrl: "https://omg10.com/4/9429975",
+                description: "Romantic comedy anime series. Very popular." 
+            },
+            
+            // ========== Action ==========
+            { 
+                id: 10, 
+                code: "50001",
+                title: "An Agent's Mission", 
+                year: "2026", 
+                rating: "8.7", 
+                quality: "4K", 
+                category: "action", 
+                thumbnail: "https://i.ibb.co.com/HD9z5F2m/hq720.jpg",
+                videoUrl: "https://youtu.be/hqGfMDSvVKA?si=37SO-3hA568bXq1b",
+                liveUrl: "https://omg10.com/4/9429975",
+                description: "An agent, sent by the Indian army to observe a terrorist - Action thriller." 
+            },
+            
+            { 
+                id: 11, 
+                code: "50002",
+                title: "South Action Bhojpuri Dubbed", 
+                year: "2025", 
+                rating: "8.5", 
+                quality: "4K", 
+                category: "action", 
+                thumbnail: "https://i.ibb.co.com/8gdm0JQv/hqdefault.jpg",
+                videoUrl: "https://youtu.be/ocr8FQnfQjs?si=uZw6Lyi3PtAo0G7w",
+                liveUrl: "https://omg10.com/4/9429975",
+                description: "South action bhojpuri dubbed movie - Action packed." 
+            },
+            
+            { 
+                id: 12, 
+                code: "50003",
+                title: "DOUBLE CONFLICT", 
+                year: "2026", 
+                rating: "8.8", 
+                quality: "4K", 
+                category: "action", 
+                thumbnail: "https://i.ibb.co.com/YFDDKfg5/images-22.jpg",
+                videoUrl: "https://youtu.be/xBXiBbw3Dxg?si=-o2_RH72rk3rWIeD",
+                liveUrl: "https://omg10.com/4/9429975",
+                description: "DOUBLE CONFLICT | Ram Pothineni, Sanjay Dutt | 2026 Hindi Dubbed South Action Crime Thriller" 
+            },
+            
+            { 
+                id: 15, 
+                code: "50004",
+                title: "New South Indian Movies Dubbed", 
+                year: "2025", 
+                rating: "8.4", 
+                quality: "4K", 
+                category: "action", 
+                thumbnail: "https://i.ibb.co.com/JWMTQZHF/images-23.jpg",
+                videoUrl: "https://youtu.be/x2SeyqGjySs?si=jLGV3rAPw-S7UKh5",
+                liveUrl: "https://omg10.com/4/9429975",
+                description: "Presenting New South Indian Movies Dubbed In Hindi 2025" 
+            },
+            
+            // ========== Natok ==========
+          
+          { 
+                id: 100, 
+                code: "60001",
+                title: "Welcome to Bachelor Point Season 5,", 
+                year: "2026", 
+                rating: "8.7", 
+                quality: "4K", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/j9ySFdJx/Qo0-ANLMa-Sg-SD.jpg",
+                videoUrl: "https://youtu.be/_Qo0ANLMaSg?si=Ssosu9EZF-HzaXnj",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Eagle Team's new drama - Islamic Biye" 
+            },
+          
+          
+            { 
+                id: 101, 
+                code: "60001",
+                title: "Islamic Biye", 
+                year: "2025", 
+                rating: "8.7", 
+                quality: "4K", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/ZRWz4jM2/hq720-4.jpg",
+                videoUrl: "https://youtu.be/fStyiEsPj6w?si=2_Ur9ScMQ1CKT6t4",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Eagle Team's new drama - Islamic Biye" 
+            },
+            
+            { 
+                id: 102, 
+                code: "60002",
+                title: "Mosharraf Karim & Tania Brishti", 
+                year: "2025", 
+                rating: "8.9", 
+                quality: "4K", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/jkhcFHXB/maxresdefault-3.jpg",
+                videoUrl: "https://youtu.be/7-k30uhdbC0?si=c8C7rGNkLp1W3mB0",
+                liveUrl: "https://omg10.com/4/9446627",
+                description: "Best funny drama starring Mosharraf Karim and Tania Brishti." 
+            },
+            
+            { 
+                id: 103, 
+                code: "60003",
+                title: "Ganja Khaiya Kul Pai Na", 
+                year: "2025", 
+                rating: "8.6", 
+                quality: "HD", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/TX2JM1S/19.png",
+                videoUrl: "https://youtu.be/tT_ccG42luk?si=o2gV9NVq0W3_Ci9f",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Ganja Khaiya Kul Pai Na - Comedy drama." 
+            },
+            
+            { 
+                id: 104, 
+                code: "60004",
+                title: "Kiranmala", 
+                year: "2025", 
+                rating: "8.5", 
+                quality: "4K", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/Hf6Mmx8s/hq720-5.jpg",
+                videoUrl: "https://youtu.be/RShOVIyGLBE?si=tpUVaXmFLZPieGOC",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Full Episode | Kiranmala | New Bengali Drama." 
+            },
+            
+            { 
+                id: 105, 
+                code: "60005",
+                title: "Bachelor Team", 
+                year: "2025", 
+                rating: "8.4", 
+                quality: "4K", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/1Cn6f3k/hq720-6.jpg",
+                videoUrl: "https://youtu.be/SdfzeN5XRhk?si=HL0nnmv3ptVN4w5r",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Bachelor Team brings special Ramadan vibes." 
+            },
+            
+            { 
+                id: 106, 
+                code: "60006",
+                title: "Shikkhito Jamai", 
+                year: "2025", 
+                rating: "8.3", 
+                quality: "HD", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/spLT4kv4/images-24.jpg",
+                videoUrl: "https://youtu.be/tVUt6b1JUaY?si=fNrpAHJqxK8ehWTq",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Natok: Shikkhito Jamai - Funny story about an educated son-in-law." 
+            },
+            
+            { 
+                id: 107, 
+                code: "60007",
+                title: "BanglaVision Special", 
+                year: "2025", 
+                rating: "8.2", 
+                quality: "HD", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/HJNYHx7/sddefault.jpg",
+                videoUrl: "https://www.youtube.com/live/UCh8vzA62Qs?si=p6AJlh0ErzqhEumq",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "BanglaVision (Shamol Bangla Media Ltd.) - Special program." 
+            },
+            
+            { 
+                id: 108, 
+                code: "60008",
+                title: "Taji Jamaier Songsar", 
+                year: "2025", 
+                rating: "8.6", 
+                quality: "4K", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/XxLHbzXT/hq720-1.jpg",
+                videoUrl: "https://youtu.be/MeevZhGeYSc?si=AqiSQSpSbBwYvkDs",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Taji Jamaier Songsar - Funny drama about a fiery son-in-law's family." 
+            },
+            
+            { 
+                id: 109, 
+                code: "60009",
+                title: "Notun Ek Golpo", 
+                year: "2025", 
+                rating: "8.5", 
+                quality: "4K", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/0yYPgHGV/images-25.jpg",
+                videoUrl: "https://youtu.be/cZYcJqMsro8?si=1zZdaAModvsvnEWE",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "A new story, a new emotion - Emotional drama." 
+            },
+            
+            { 
+                id: 110, 
+                code: "60010",
+                title: "Prem Amar", 
+                year: "2025", 
+                rating: "8.4", 
+                quality: "HD", 
+                category: "natok", 
+                thumbnail: "https://i.ibb.co.com/nq4X4Nps/images-26.jpg",
+                videoUrl: "https://youtu.be/bMCLQdagzWs?si=tdA5teAtuAliZpjP",
+                liveUrl: "https://omg10.com/4/9717825",
+                description: "Prem Amar - Love story on the first day at university." 
+            }
+        ];
+    </script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Hind Siliguri', 'Poppins', sans-serif;
+            background: #ffffff;
+            color: #333333;
+            line-height: 1.5;
+        }
+
+        /* Top running bar */
+        .top-bar {
+            background: #ff0000;
+            color: #ffffff;
+            padding: 12px 0;
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .top-bar-content {
+            display: inline-block;
+            animation: scrollLeft 20s linear infinite;
+            padding-left: 100%;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo img {
+            height: 45px;
+            width: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ff0000;
+            transition: all 0.3s ease;
+        }
+
+        .logo img:hover {
+            transform: scale(1.1);
+            border-color: #0000ff;
+            box-shadow: 0 0 20px #ff0000;
+        }
+
+        .logo span {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff0000, #0000ff, #ffff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 50px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff0000;
+            box-shadow: 0 0 15px rgba(255,0,0,0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .search-input:focus + .search-icon {
+            color: #ff0000;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+        }
+
+        .search-suggestions.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .suggestion-item:hover {
+            background: rgba(255,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .suggestion-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .suggestion-item .suggestion-info {
+            flex: 1;
+        }
+
+        .suggestion-item .suggestion-title {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .suggestion-item .suggestion-meta {
+            font-size: 12px;
+            color: #ff0000;
+            font-weight: 500;
+        }
+
+        .suggestion-item .suggestion-category {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .no-suggestions {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
+
+        /* Category Buttons */
+        .categories {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .categories::-webkit-scrollbar { display: none; }
+
+        .category-wrapper {
+            display: inline-flex;
+            gap: 12px;
+        }
+
+        .category-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            animation: threeColorGlow 3s infinite;
+        }
+
+        .category-btn:hover { transform: translateY(-2px); }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, #ff0000, #0000ff, #ffff00);
+            color: white;
+        }
+
+        @keyframes threeColorGlow {
+            0% { box-shadow: 0 0 10px #ff0000; }
+            33% { box-shadow: 0 0 10px #0000ff; }
+            66% { box-shadow: 0 0 10px #ffff00; }
+            100% { box-shadow: 0 0 10px #ff0000; }
+        }
+
+        /* Trending Banner */
+        .trending-banner {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .trending-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            border: 4px solid transparent;
+            animation: threeColorBorder 3s infinite;
+        }
+
+        @keyframes threeColorBorder {
+            0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
+            33% { border-color: #0000ff; box-shadow: 0 0 15px #0000ff; }
+            66% { border-color: #ffff00; box-shadow: 0 0 15px #ffff00; }
+            100% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
+        }
+
+        .trending-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .trending-card:hover .trending-image { transform: scale(1.05); }
+
+        /* Trending Title */
+        .trending-title-container {
+            max-width: 1400px;
+            margin: 10px auto 30px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .trending-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #333;
+        }
+
+        .trending-badge {
+            background: linear-gradient(135deg, #ff0000, #0000ff, #ffff00);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 14px;
+            animation: threeColorGlow 3s infinite;
+        }
+
+        /* Movie Grid */
+        .movie-section {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2 i {
+            animation: heartBeat 1.5s infinite;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); color: #ff0000; }
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (min-width: 640px) {
+            .movie-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (min-width: 1024px) {
+            .movie-grid { grid-template-columns: repeat(5, 1fr); }
+        }
+
+        /* Movie Card */
+        .movie-card {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            border: 4px solid transparent;
+            animation: threeColorBorder 3s infinite;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            animation: threeColorBorder 1.5s infinite;
+        }
+
+        .movie-thumbnail {
+            position: relative;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+        }
+
+        .movie-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .movie-card:hover .movie-thumbnail img { transform: scale(1.1); }
+
+        .movie-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .movie-card:hover .movie-overlay { opacity: 1; }
+
+        .movie-overlay i {
+            font-size: 50px;
+            color: white;
+        }
+
+        .movie-quality {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            z-index: 2;
+            border: 2px solid transparent;
+            animation: threeColorBorder 2s infinite;
+        }
+
+        .movie-info {
+            padding: 15px;
+            background: white;
+            position: relative;
+        }
+
+        .movie-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
+            padding-right: 35px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+            font-size: 13px;
+            gap: 10px;
+        }
+
+        .movie-meta span {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .movie-meta i {
+            color: #ffd700;
+        }
+
+        .like-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            z-index: 3;
+        }
+
+        .like-btn:hover {
+            transform: scale(1.1);
+            background: #ff0000;
+            color: white;
+        }
+
+        .like-btn.active {
+            background: #ff0000;
+            color: white;
+            animation: likePop 0.3s ease;
+        }
+
+        @keyframes likePop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Player Section */
+        .player-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .player-section.active { display: block; }
+
+        .player-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 3px solid transparent;
+            animation: threeColorBorder 2s infinite;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #ff0000, #0000ff, #ffff00);
+            color: white;
+        }
+
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: black;
+            position: relative;
+        }
+
+        .video-player, .youtube-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .movie-actions {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .premium-btn {
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .premium-btn.live {
+            background: linear-gradient(135deg, #0000ff, #ffff00);
+            animation: threeColorBorder 2s infinite reverse;
+        }
+
+        .premium-btn:hover { transform: scale(1.05); }
+
+        /* Telegram Button */
+        .telegram-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 5px 20px rgba(0,136,204,0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            animation: telegramPulse 2s infinite;
+        }
+
+        @keyframes telegramPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 5px 20px rgba(0,136,204,0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 5px 30px rgba(0,136,204,0.8); }
+        }
+
+        .telegram-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 5px 30px rgba(0,136,204,0.8);
+        }
+
+        /* Telegram Modal */
+        .telegram-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .telegram-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .telegram-modal-content {
+            background: white;
+            border-radius: 40px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.8);
+            transition: 0.3s;
+            border: 4px solid #0088cc;
+            box-shadow: 0 0 30px #0088cc;
+        }
+
+        .telegram-modal.show .telegram-modal-content {
+            transform: scale(1);
+        }
+
+        .telegram-modal-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 50px;
+            animation: telegramIconPulse 2s infinite;
+        }
+
+        @keyframes telegramIconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .telegram-modal h3 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #0088cc;
+        }
+
+        .telegram-modal p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .telegram-join-btn {
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .telegram-join-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px #0088cc;
+        }
+
+        .telegram-close {
+            margin-top: 20px;
+            color: #999;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .telegram-close:hover {
+            color: #0088cc;
+        }
+
+        /* Ad Modal */
+        .ad-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .ad-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .ad-modal-content {
+            background: white;
+            border-radius: 40px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.8);
+            transition: 0.3s;
+            border: 4px solid transparent;
+            animation: threeColorBorder 2s infinite;
+        }
+
+        .ad-modal.show .ad-modal-content { transform: scale(1); }
+
+        .ad-timer-circle {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 25px;
+            position: relative;
+        }
+
+        .ad-timer-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .ad-timer-svg circle {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+        .ad-timer-bg { stroke: #e0e0e0; }
+
+        .ad-timer-progress {
+            stroke: #ff0000;
+            stroke-dasharray: 314;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+            animation: progressColor 3s infinite;
+        }
+
+        @keyframes progressColor {
+            0% { stroke: #ff0000; }
+            33% { stroke: #0000ff; }
+            66% { stroke: #ffff00; }
+            100% { stroke: #ff0000; }
+        }
+
+        .ad-timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: 800;
+            color: #ff0000;
+            animation: textColor 3s infinite;
+        }
+
+        @keyframes textColor {
+            0% { color: #ff0000; }
+            33% { color: #0000ff; }
+            66% { color: #ffff00; }
+            100% { color: #ff0000; }
+        }
+
+        .ad-message {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .ad-warning {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 50px;
+            margin: 15px 0;
+            font-size: 14px;
+            display: none;
+            border: 2px solid transparent;
+            animation: threeColorBorder 1s infinite;
+        }
+
+        .ad-warning.show { display: block; }
+
+        .ad-skip-btn {
+            background: linear-gradient(135deg, #ff0000, #0000ff, #ffff00);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .ad-skip-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .ad-skip-btn.active:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top running bar -->
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <i class="fas fa-film"></i> Watch all movies for free. Just watch a short 10-second ad. <i class="fas fa-clock"></i> 10 seconds <i class="fas fa-play"></i>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="" alt="Logo" id="logoImg" style="display: none;">
+                <span id="siteName">MovieFlex</span>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search movies by name...">
+                <i class="fas fa-search search-icon"></i>
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Buttons -->
+    <div class="categories">
+        <div class="category-wrapper">
+            <div class="category-btn active" data-category="all" onclick="filterMovies('all')">
+                <i class="fas fa-globe"></i> All
+            </div>
+            <div class="category-btn" data-category="hindi" onclick="filterMovies('hindi')">
+                <i class="fas fa-language"></i> Hindi
+            </div>
+            <div class="category-btn" data-category="bangla" onclick="filterMovies('bangla')">
+                <i class="fas fa-book-open"></i> Bangla
+            </div>
+            <div class="category-btn" data-category="indian" onclick="filterMovies('indian')">
+                <i class="fas fa-map"></i> Indian
+            </div>
+            <div class="category-btn" data-category="anime" onclick="filterMovies('anime')">
+                <i class="fas fa-dragon"></i> funny 
+            </div>
+            <div class="category-btn" data-category="action" onclick="filterMovies('action')">
+                <i class="fas fa-fist-raised"></i> Action
+            </div>
+            <div class="category-btn" data-category="natok" onclick="filterMovies('natok')">
+                <i class="fas fa-theater-masks"></i> Drama
+            </div>
+            <div class="category-btn" data-category="favorites" onclick="showFavorites()">
+                <i class="fas fa-heart" style="color: #ff0000;"></i> Favorites
+            </div>
+        </div>
+    </div>
+
+    <!-- Trending Banner -->
+    <div class="trending-banner">
+        <div class="trending-card" onclick="handleMovieClick('trending')">
+            <img src="https://i.ibb.co.com/DfLzRDm0/article.jpg" alt="Trending Movie" class="trending-image" id="trendingImage">
+        </div>
+    </div>
+
+    <!-- Trending Title -->
+    <div class="trending-title-container">
+        <span class="trending-badge"><i class="fas fa-fire"></i> Trending </span>
+        <h1 class="trending-title" id="trendingTitle">Prince movie trailer- Shakib Khan</h1>
+    </div>
+
+    <!-- Movie Grid -->
+    <div class="movie-section">
+        <div class="section-header">
+            <h2 id="sectionTitle"><i class="fas fa-fire"></i> Popular</h2>
+        </div>
+        <div class="movie-grid" id="movieGrid"></div>
+    </div>
+
+    <!-- Telegram Floating Button -->
+    <div class="telegram-btn" onclick="showTelegramModal()">
+        <i class="fab fa-telegram-plane"></i>
+    </div>
+
+    <!-- Telegram Modal -->
+    <div class="telegram-modal" id="telegramModal">
+        <div class="telegram-modal-content">
+            <div class="telegram-modal-icon">
+                <i class="fab fa-telegram-plane"></i>
+            </div>
+            <h3>Join Telegram Channel</h3>
+            <p>Get latest movie updates, exclusive content and more!</p>
+            <button class="telegram-join-btn" onclick="joinTelegram()">
+                <i class="fab fa-telegram-plane"></i> Join Now
+            </button>
+            <div class="telegram-close" onclick="closeTelegramModal()">Maybe Later</div>
+        </div>
+    </div>
+
+    <!-- Ad Modal -->
+    <div class="ad-modal" id="adModal">
+        <div class="ad-modal-content">
+            <div class="ad-timer-circle">
+                <svg class="ad-timer-svg" viewBox="0 0 120 120">
+                    <circle class="ad-timer-bg" cx="60" cy="60" r="50"></circle>
+                    <circle class="ad-timer-progress" id="adProgress" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="0"></circle>
+                </svg>
+                <div class="ad-timer-text" id="adTimer">10</div>
+            </div>
+            
+            <h3 style="font-size: 28px; font-weight: 800; margin-bottom: 15px; background: linear-gradient(135deg, #ff0000, #0000ff, #ffff00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                <i class="fas fa-ad"></i> Advertisement
+            </h3>
+            
+            <p class="ad-message" id="adMessage">
+                Please watch the ad to continue...
+            </p>
+            
+            <div class="ad-warning" id="adWarning">
+                <i class="fas fa-exclamation-triangle"></i>
+                Warning: If you go back, you'll have to watch the ad again!
+            </div>
+            
+            <button class="ad-skip-btn" id="skipAdBtn" onclick="skipAd()">
+                <i class="fas fa-forward"></i> Skip Ad (after 10 seconds)
+            </button>
+        </div>
+    </div>
+
+    <!-- Player Section -->
+    <div class="player-section" id="playerSection">
+        <div class="player-header">
+            <div class="back-btn" onclick="closePlayer()">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <h3 id="playerMovieTitle">Movie Name</h3>
+        </div>
+
+        <div class="video-container" id="videoContainer">
+            <!-- Video player will be dynamically loaded here -->
+        </div>
+
+        <div class="movie-actions">
+            <h2 id="playerTitle" style="font-size: 32px; font-weight: 800; margin-bottom: 10px;"></h2>
+            <p id="playerDesc" style="color: #666; margin-bottom: 15px;"></p>
+            
+            <div class="action-buttons">
+                <a href="#" class="premium-btn live" id="watchLiveBtn" target="_blank">
+                    <i class="fas fa-video"></i>
+                    <span>Watch Live</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // YouTube URL extraction functions
+        // ============================================
+        function getYouTubeVideoId(url) {
+            if (!url) return null;
+            
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+                /youtube\.com\/shorts\/([^&\n?#]+)/
+            ];
+            
+            for (let pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) return match[1];
+            }
+            return null;
+        }
+
+        function isYouTubeUrl(url) {
+            return url && (url.includes('youtube.com') || url.includes('youtu.be'));
+        }
+
+        // ============================================
+        // Telegram Functions
+        // ============================================
+        function showTelegramModal() {
+            if (TELEGRAM_CONFIG.enabled) {
+                document.getElementById('telegramModal').classList.add('show');
+            }
+        }
+
+        function closeTelegramModal() {
+            document.getElementById('telegramModal').classList.remove('show');
+        }
+
+        function joinTelegram() {
+            window.open(TELEGRAM_CONFIG.channelLink, '_blank');
+            closeTelegramModal();
+        }
+
+        // ============================================
+        // Favorites Functions (Local Storage)
+        // ============================================
+        function getFavorites() {
+            const favorites = localStorage.getItem('movieFavorites');
+            return favorites ? JSON.parse(favorites) : [];
+        }
+
+        function saveFavorites(favorites) {
+            localStorage.setItem('movieFavorites', JSON.stringify(favorites));
+        }
+
+        function toggleFavorite(movieId) {
+            const favorites = getFavorites();
+            const index = favorites.indexOf(movieId);
+            
+            if (index === -1) {
+                favorites.push(movieId);
+            } else {
+                favorites.splice(index, 1);
+            }
+            
+            saveFavorites(favorites);
+            updateLikeButtons();
+            
+            if (currentCategory === 'favorites') {
+                showFavorites();
+            }
+        }
+
+        function isFavorite(movieId) {
+            const favorites = getFavorites();
+            return favorites.indexOf(movieId) !== -1;
+        }
+
+        function updateLikeButtons() {
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                const movieId = parseInt(btn.dataset.id);
+                if (isFavorite(movieId)) {
+                    btn.classList.add('active');
+                    btn.innerHTML = '<i class="fas fa-heart"></i>';
+                } else {
+                    btn.classList.remove('active');
+                    btn.innerHTML = '<i class="far fa-heart"></i>';
+                }
+            });
+        }
+
+        // ============================================
+        // Search Functions (Auto-suggest)
+        // ============================================
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const suggestionsContainer = document.getElementById('searchSuggestions');
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                if (query.length === 0) {
+                    suggestionsContainer.classList.remove('show');
+                    return;
+                }
+                
+                const results = MOVIES.filter(movie => 
+                    movie.title.toLowerCase().startsWith(query) ||
+                    movie.title.toLowerCase().includes(' ' + query)
+                );
+                
+                displaySuggestions(results, query);
+                suggestionsContainer.classList.add('show');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+                    suggestionsContainer.classList.remove('show');
+                }
+            });
+        }
+
+        function displaySuggestions(results, query) {
+            const suggestionsContainer = document.getElementById('searchSuggestions');
+            
+            if (results.length === 0) {
+                suggestionsContainer.innerHTML = '<div class="no-suggestions">No movies found</div>';
+                return;
+            }
+            
+            const limitedResults = results.slice(0, 5);
+            
+            let html = '';
+            limitedResults.forEach(movie => {
+                const title = movie.title;
+                const highlightedTitle = title.replace(new RegExp(query, 'gi'), match => `<span style="color: #ff0000; font-weight: 600;">${match}</span>`);
+                
+                html += `
+                    <div class="suggestion-item" onclick="handleMovieClick(${movie.id})">
+                        <img src="${movie.thumbnail}" alt="${movie.title}">
+                        <div class="suggestion-info">
+                            <div class="suggestion-title">${highlightedTitle}</div>
+                            <div class="suggestion-meta">${movie.year} • ${movie.quality}</div>
+                            <div class="suggestion-category">${movie.category.toUpperCase()}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            suggestionsContainer.innerHTML = html;
+        }
+
+        // ============================================
+        // Show Favorites
+        // ============================================
+        function showFavorites() {
+            currentCategory = 'favorites';
+            
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.dataset.category === 'favorites') {
+                    btn.classList.add('active');
+                }
+            });
+            
+            const favorites = getFavorites();
+            const favoriteMovies = MOVIES.filter(movie => favorites.includes(movie.id));
+            
+            const sectionTitle = document.getElementById('sectionTitle');
+            sectionTitle.innerHTML = '<i class="fas fa-heart" style="color: #ff0000;"></i> My Favorites';
+            
+            displayMovies(favoriteMovies);
+        }
+
+        // ============================================
+        // Display Movies
+        // ============================================
+        function displayMovies(movies) {
+            const movieGrid = document.getElementById('movieGrid');
+            
+            if (!movies || movies.length === 0) {
+                movieGrid.innerHTML = '<div style="text-align: center; padding: 50px; color: #666;">No movies found</div>';
+                return;
+            }
+            
+            let html = '';
+            movies.forEach(movie => {
+                const isFav = isFavorite(movie.id);
+                html += `
+                    <div class="movie-card" onclick="handleMovieClick(${movie.id})">
+                        <div class="movie-thumbnail">
+                            <img src="${movie.thumbnail}" alt="${movie.title}" loading="lazy">
+                            <span class="movie-quality">${movie.quality}</span>
+                            <div class="movie-overlay">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                        </div>
+                        <div class="movie-info">
+                            <div class="movie-title">${movie.title}</div>
+                            <div class="movie-meta">
+                                <span>${movie.year}</span>
+                                <span><i class="fas fa-star"></i> ${movie.rating}</span>
+                            </div>
+                            <div class="like-btn ${isFav ? 'active' : ''}" data-id="${movie.id}" onclick="event.stopPropagation(); toggleFavorite(${movie.id})">
+                                <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            movieGrid.innerHTML = html;
+        }
+
+        // ============================================
+        // Global variables
+        // ============================================
+        let currentCategory = 'all';
+        let selectedMovie = null;
+        let adTimer = null;
+        let redirectTimer = null;
+        let timeLeft = AD_CONFIG.duration;
+        let canSkip = false;
+        let adWindow = null;
+
+        // Apply site configuration
+        document.getElementById('siteName').textContent = SITE_CONFIG.siteName;
+        
+        if (SITE_CONFIG.logoUrl) {
+            document.getElementById('logoImg').src = SITE_CONFIG.logoUrl;
+            document.getElementById('logoImg').style.display = 'block';
+        }
+
+        document.querySelector('.top-bar-content').innerHTML = `
+            <i class="fas fa-film"></i> ${TOP_BAR_MESSAGE} <i class="fas fa-clock"></i> ${AD_CONFIG.duration} seconds <i class="fas fa-play"></i>
+        `;
+
+        document.getElementById('trendingImage').src = TRENDING_MOVIE.thumbnail;
+        document.getElementById('trendingTitle').textContent = TRENDING_MOVIE.title;
+
+        function getAdLinkForMovie(movie) {
+            if (movie.id && MOVIE_SPECIFIC_AD_LINKS[movie.id]) return MOVIE_SPECIFIC_AD_LINKS[movie.id];
+            if (movie.category && CATEGORY_AD_LINKS[movie.category]) return CATEGORY_AD_LINKS[movie.category];
+            if (movie.id === "trending") return TRENDING_AD_LINK;
+            return AD_CONFIG.defaultAdLink;
+        }
+
+        window.onload = function() {
+            loadMovies('all');
+            setupBackButtonProtection();
+            setupSearch();
+            updateLikeButtons();
+        };
+
+        function loadMovies(category = 'all') {
+            currentCategory = category;
+            
+            const sectionTitle = document.getElementById('sectionTitle');
+            if (category === 'all') {
+                sectionTitle.innerHTML = '<i class="fas fa-fire"></i> Popular';
+            } else {
+                const categoryNames = {
+                    hindi: 'Hindi Movies',
+                    bangla: 'Bangla Movies',
+                    indian: 'Indian Movies',
+                    funny: 'funny',
+                    action: 'Action Movies',
+                    natok: 'Drama'
+                };
+                sectionTitle.innerHTML = `<i class="fas fa-film"></i> ${categoryNames[category] || 'Movies'}`;
+            }
+            
+            let filteredMovies = category === 'all' ? MOVIES : MOVIES.filter(m => m.category === category);
+            displayMovies(filteredMovies);
+        }
+
+        function filterMovies(category) {
+            loadMovies(category);
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.dataset.category === category) btn.classList.add('active');
+            });
+        }
+
+        function handleMovieClick(movieId) {
+            selectedMovie = movieId === "trending" ? TRENDING_MOVIE : MOVIES.find(m => m.id === movieId);
+            if (!selectedMovie) return;
+            
+            timeLeft = AD_CONFIG.duration;
+            
+            if (typeof showAdsgramAd === 'function') {
+                showAdsgramAd(function(success) {
+                    showOldAdSystem();
+                });
+            } else {
+                showOldAdSystem();
+            }
+        }
+
+        function showOldAdSystem() {
+            const modal = document.getElementById('adModal');
+            const timerSpan = document.getElementById('adTimer');
+            const progressCircle = document.getElementById('adProgress');
+            const skipBtn = document.getElementById('skipAdBtn');
+            const adMessage = document.getElementById('adMessage');
+            
+            adMessage.innerHTML = `Redirecting to ad in ${AD_CONFIG.redirectDelay} seconds...`;
+            
+            timeLeft = AD_CONFIG.duration;
+            canSkip = false;
+            timerSpan.textContent = timeLeft;
+            progressCircle.style.strokeDashoffset = '314';
+            skipBtn.classList.remove('active');
+            
+            modal.classList.add('show');
+            
+            redirectTimer = setTimeout(redirectToAd, AD_CONFIG.redirectDelay * 1000);
+            startAdTimer();
+        }
+
+        function startAdTimer() {
+            const timerSpan = document.getElementById('adTimer');
+            const progressCircle = document.getElementById('adProgress');
+            const skipBtn = document.getElementById('skipAdBtn');
+            const circumference = 314;
+            
+            if (adTimer) clearInterval(adTimer);
+            
+            adTimer = setInterval(() => {
+                timeLeft--;
+                timerSpan.textContent = timeLeft;
+                const progress = (AD_CONFIG.duration - timeLeft) / AD_CONFIG.duration * circumference;
+                progressCircle.style.strokeDashoffset = circumference - progress;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(adTimer);
+                    canSkip = true;
+                    skipBtn.classList.add('active');
+                    skipBtn.innerHTML = '<i class="fas fa-check"></i> Skip Ad';
+                }
+            }, 1000);
+        }
+
+        function redirectToAd() {
+            let adLink = getAdLinkForMovie(selectedMovie);
+            adWindow = window.open(adLink, '_blank');
+            document.getElementById('adMessage').innerHTML = AD_CONFIG.adMessage;
+        }
+
+        function skipAd() {
+            if (canSkip) {
+                clearTimeout(redirectTimer);
+                clearInterval(adTimer);
+                if (adWindow && !adWindow.closed) adWindow.close();
+                closeAdModal();
+                openPlayer();
+            }
+        }
+
+        function closeAdModal() {
+            document.getElementById('adModal').classList.remove('show');
+        }
+
+        function openPlayer() {
+            const playerSection = document.getElementById('playerSection');
+            const videoContainer = document.getElementById('videoContainer');
+            const playerTitle = document.getElementById('playerTitle');
+            const playerDesc = document.getElementById('playerDesc');
+            const playerMovieTitle = document.getElementById('playerMovieTitle');
+            const watchLiveBtn = document.getElementById('watchLiveBtn');
+            
+            playerTitle.textContent = selectedMovie.title;
+            playerDesc.textContent = selectedMovie.description;
+            playerMovieTitle.textContent = selectedMovie.title;
+            
+            videoContainer.innerHTML = '';
+            
+            if (selectedMovie.videoUrl && isYouTubeUrl(selectedMovie.videoUrl)) {
+                const videoId = getYouTubeVideoId(selectedMovie.videoUrl);
+                if (videoId) {
+                    const iframe = document.createElement('iframe');
+                    iframe.className = 'youtube-iframe';
+                    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                    iframe.allowFullscreen = true;
+                    videoContainer.appendChild(iframe);
+                } else {
+                    videoContainer.innerHTML = '<div style="color:white; text-align:center; padding:50px;">Unable to load video</div>';
+                }
+            } else if (selectedMovie.videoUrl) {
+                const video = document.createElement('video');
+                video.className = 'video-player';
+                video.controls = true;
+                video.autoplay = true;
+                
+                const source = document.createElement('source');
+                source.src = selectedMovie.videoUrl;
+                source.type = 'video/mp4';
+                
+                video.appendChild(source);
+                videoContainer.appendChild(video);
+            } else {
+                videoContainer.innerHTML = '<div style="color:white; text-align:center; padding:50px;">No video available</div>';
+            }
+            
+            watchLiveBtn.href = selectedMovie.liveUrl || '#';
+            
+            playerSection.classList.add('active');
+        }
+
+        function closePlayer() {
+            const playerSection = document.getElementById('playerSection');
+            const videoContainer = document.getElementById('videoContainer');
+            
+            videoContainer.innerHTML = '';
+            playerSection.classList.remove('active');
+        }
+
+        function setupBackButtonProtection() {
+            for(let i = 0; i < 3; i++) history.pushState(null, null, location.href);
+            
+            window.addEventListener('popstate', function() {
+                const modal = document.getElementById('adModal');
+                if (modal.classList.contains('show')) {
+                    document.getElementById('adWarning').classList.add('show');
+                    alert(`⚠️ Warning: If you go back, you'll have to watch the ${AD_CONFIG.duration}-second ad again!`);
+                    
+                    clearTimeout(redirectTimer);
+                    clearInterval(adTimer);
+                    if (adWindow && !adWindow.closed) adWindow.close();
+                    
+                    modal.classList.remove('show');
+                    setTimeout(showOldAdSystem, 500);
+                    return;
+                }
+                
+                const EXIT_MESSAGE = "⚠️ Are you sure you want to leave this page?";
+                if (confirm(EXIT_MESSAGE)) {
+                    // exit
+                } else {
+                    for(let i = 0; i < 3; i++) history.pushState(null, null, location.href);
+                }
+            });
+            
+            setInterval(() => history.pushState(null, null, location.href), 2000);
+        }
+
+        setInterval(function() {
+            if (adWindow && adWindow.closed === false && timeLeft <= 0) {
+                adWindow.close();
+                closeAdModal();
+                openPlayer();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
